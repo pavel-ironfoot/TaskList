@@ -3,11 +3,25 @@ const container = document.querySelector('.container');
 const sortAbc = document.querySelector('.sortAbc');
 const sortDate = document.querySelector('.sortDate');
 
+
+
 let mainList =[];
 
 if(localStorage.getItem('todo')){
     mainList = JSON.parse(localStorage.getItem('todo'));
     showList();
+}
+
+function rocKnRoll(){
+    let containersTask = document.querySelectorAll('.containerTask');
+containersTask.forEach(elem=>{
+    elem.addEventListener('dragstart',startDragBlock);
+    elem.addEventListener('dragend',endDragBlock);
+    elem.addEventListener('drag',dragDragBlock);
+    elem.addEventListener('dragover',overDragBlock);
+    elem.addEventListener('dragenter',enterDragBlock);
+    elem.addEventListener('drop',dropDragBlock);
+});
 }
 
 addTask.addEventListener('submit',function(e){
@@ -22,8 +36,9 @@ addTask.addEventListener('submit',function(e){
         checked:false,
     }
     mainList.push(newTodo);
-    showList();
 
+    showList();
+    
     localStorage.setItem('todo', JSON.stringify(mainList))
 });
 
@@ -31,7 +46,7 @@ addTask.addEventListener('submit',function(e){
 function showList(){
         let allTasks = '';
         for(let i=0;i<mainList.length;i++){
-            allTasks = allTasks + `<div class="container${i} containerTask">
+            allTasks = allTasks + `<div draggable="true" id="${i}container" class="container${i} containerTask">
                                     <label for="elemInput${i}">
                                     <p>${mainList[i].dateCreate}</p>
                                     <p>${mainList[i].task}</p>
@@ -43,6 +58,7 @@ function showList(){
         }
     
     container.innerHTML = allTasks;
+    rocKnRoll();
 }
 
 container.addEventListener('click',function(event){
@@ -54,7 +70,7 @@ container.addEventListener('click',function(event){
             let cutNum =event.target.getAttribute('id').replace('bt','');
             mainList.splice(cutNum,1);
             showList();
-            localStorage.setItem('todo', JSON.stringify(mainList))
+            localStorage.setItem('todo', JSON.stringify(mainList));
         }
         if(forCheck==='ed'){
             let cutNum =event.target.getAttribute('id').replace('ed','');
@@ -108,3 +124,42 @@ sortAbc.addEventListener('click',function(){
         localStorage.setItem('todo', JSON.stringify(mainList))
     }
 });
+
+
+let start=0;
+let helpEnd = 0;
+function startDragBlock(event){
+    start = parseInt(event.target.getAttribute('id'),10);
+    helpEnd = parseInt(event.target.getAttribute('id'),10);
+}
+
+function dropDragBlock(event){
+    
+    console.log('drop',event.target.getAttribute('id'));
+    console.log(start);
+    let end = parseInt(event.target.getAttribute('id'),10);
+    if(event.target.getAttribute('id')===null){end = helpEnd}
+    console.log('before',mainList);
+    mainList.map((elem,ind)=>{
+        if(ind==start){
+            let h = mainList[ind];
+            mainList[ind] = mainList[end];
+            mainList[end] = h;
+        }   
+    });
+    console.log('after',mainList);
+    showList();
+    localStorage.setItem('todo', JSON.stringify(mainList))
+}
+function endDragBlock(event){
+}
+function overDragBlock(event){
+    event.preventDefault();
+}
+function enterDragBlock(event){
+    if(event.target.getAttribute('id')===null){return}
+    helpEnd = parseInt(event.target.getAttribute('id'),10);
+    console.log('enter',event.target.getAttribute('id'));
+}
+function dragDragBlock(event){
+}

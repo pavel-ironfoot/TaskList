@@ -39,6 +39,7 @@ main{
     padding: 10px;
     box-shadow: 5px 4px 5px rgb(84, 170, 192);
     background-color: rgb(171, 191, 207);
+    cursor: grab;
 }
 .containerTask p{
     margin: 4px;
