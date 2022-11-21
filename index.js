@@ -39,7 +39,8 @@ addTask.addEventListener('submit',function(e){
 
     showList();
     
-    localStorage.setItem('todo', JSON.stringify(mainList))
+    localStorage.setItem('todo', JSON.stringify(mainList));
+    addTask.reset();
 });
 
 
